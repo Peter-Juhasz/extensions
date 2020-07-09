@@ -55,6 +55,12 @@ A few examples:
    - [new api](https://github.com/Peter-Juhasz/extensions/labels/new%20api) `bool IsSchemeRelative()`: determines whether the scheme of the `Uri` is relative.
    - [new api](https://github.com/Peter-Juhasz/extensions/labels/new%20api) `Uri Append(Uri relative)`: appends an `Uri` to another.
    - [new api](https://github.com/Peter-Juhasz/extensions/labels/new%20api) `Uri AppendQueryString(string name, string? value)`: appends a name-value pair as query string to a `Uri`.
+ - `char`
+   - [helper](https://github.com/Peter-Juhasz/extensions/labels/helper) `bool IsDigit()`
+   - [helper](https://github.com/Peter-Juhasz/extensions/labels/helper) `bool IsLetter()`
+   - [helper](https://github.com/Peter-Juhasz/extensions/labels/helper) `bool IsWhiteSpace()`
+   - [helper](https://github.com/Peter-Juhasz/extensions/labels/helper) `char ToLower()`
+   - [helper](https://github.com/Peter-Juhasz/extensions/labels/helper) `char ToUpper()`
 
 ### Collection types
  - `IEnumerable<T>`
