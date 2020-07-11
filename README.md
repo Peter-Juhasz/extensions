@@ -112,3 +112,11 @@ A few examples:
    - [helper](https://github.com/Peter-Juhasz/extensions/labels/helper) `bool IsIPv6()`: determines whether an IP address is version 6.
  - `RandomNumberGenerator`
    - [missing overload](https://github.com/Peter-Juhasz/extensions/labels/missing%20overload) `int GetInt32()`: gets a random integer.
+ - `PropertyInfo`
+   - [helper](https://github.com/Peter-Juhasz/extensions/labels/helper) `T GetValue<T>(object instance)`
+   - [helper](https://github.com/Peter-Juhasz/extensions/labels/helper) `object GetStaticValue()`
+   - [helper](https://github.com/Peter-Juhasz/extensions/labels/helper) `T GetStaticValue<T>()`
+ - `FieldInfo`
+   - [helper](https://github.com/Peter-Juhasz/extensions/labels/helper) `T GetValue<T>(object instance)`
+   - [helper](https://github.com/Peter-Juhasz/extensions/labels/helper) `object GetStaticValue()`
+   - [helper](https://github.com/Peter-Juhasz/extensions/labels/helper) `T GetStaticValue<T>()`
