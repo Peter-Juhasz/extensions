@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Buffers;
+using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -33,24 +34,33 @@ public readonly record struct Color(
 				ExpandHexNibble(hex[2]),
 				ExpandHexNibble(hex[3])
 			),
-			6 => FromHexBytes(Convert.FromHexString(hex)),
-			8 => FromHexBytes(Convert.FromHexString(hex)),
+			6 or 8 => FromHexBytes(hex),
 			_ => throw new FormatException("Color hex string must contain 3, 4, 6, or 8 hexadecimal characters.")
 		};
 	}
 
-	public string ToHexString() => A switch
+	public string ToHexString() => String.Create(A is byte.MaxValue ? 7 : 9, this, static (destination, color) =>
 	{
-		byte.MaxValue => $"#{R:X2}{G:X2}{B:X2}",
-		_ => $"#{R:X2}{G:X2}{B:X2}{A:X2}"
-	};
+		destination[0] = '#';
+		ReadOnlySpan<byte> bytes = [color.R, color.G, color.B, color.A];
+		Convert.TryToHexString(color.A is byte.MaxValue ? bytes[..3] : bytes, destination[1..], out _);
+	});
 
-	private static Color FromHexBytes(ReadOnlySpan<byte> bytes) => bytes.Length switch
+	private static Color FromHexBytes(ReadOnlySpan<char> hex)
 	{
-		3 => new(bytes[0], bytes[1], bytes[2]),
-		4 => new(bytes[0], bytes[1], bytes[2], bytes[3]),
-		_ => throw new FormatException("Color hex string must contain 3, 4, 6, or 8 hexadecimal characters.")
-	};
+		Span<byte> bytes = stackalloc byte[4];
+		if (Convert.FromHexString(hex, bytes, out _, out var bytesWritten) is not OperationStatus.Done)
+		{
+			throw new FormatException("Color hex string contains invalid hexadecimal characters.");
+		}
+
+		return bytesWritten switch
+		{
+			3 => new(bytes[0], bytes[1], bytes[2]),
+			4 => new(bytes[0], bytes[1], bytes[2], bytes[3]),
+			_ => throw new FormatException("Color hex string must contain 3, 4, 6, or 8 hexadecimal characters.")
+		};
+	}
 
 	private static byte ExpandHexNibble(char value)
 	{
