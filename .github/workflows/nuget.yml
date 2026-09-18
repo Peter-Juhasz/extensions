@@ -10,21 +10,19 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     permissions:
       id-token: write
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v7
 
     - name: Setup .NET
-      uses: actions/setup-dotnet@v2
+      uses: actions/setup-dotnet@v6
       with:
         dotnet-version: 10.x
-        include-prerelease: true
-    - name: Setup NuGet
-      uses: NuGet/setup-nuget@v1
+        dotnet-quality: ga
 
     - name: Clean
       run: dotnet clean
@@ -54,7 +52,7 @@ jobs:
       run: dotnet pack --configuration Release --version-suffix "preview.${{ github.run_number }}" -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg
       
     - name: Upload artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v7
       if: always()
       with:
         name: packages
