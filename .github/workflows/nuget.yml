@@ -56,11 +56,11 @@ jobs:
       working-directory: src/${{ env.PROJECT_NAME }}
       run: dotnet pack --configuration Release --version-suffix "preview.${{ github.run_number }}" -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg
       
-    - name: Attest
-      uses: actions/attest-build-provenance@v4
-      with:
-        subject-path: |
-          ./src/${{ env.PROJECT_NAME }}/bin/${{ env.BUILD_CONFIGURATION }}/*.nupkg
+    # - name: Attest
+    #   uses: actions/attest-build-provenance@v4
+    #   with:
+    #     subject-path: |
+    #       ./src/${{ env.PROJECT_NAME }}/bin/${{ env.BUILD_CONFIGURATION }}/*.nupkg
 
     - name: Upload artifact
       uses: actions/upload-artifact@v7
