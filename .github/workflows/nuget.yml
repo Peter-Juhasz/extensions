@@ -1,0 +1,71 @@
+﻿name: NuGet
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths-ignore:
+      - docs/**
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    permissions:
+      id-token: write
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 10.x
+        include-prerelease: true
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v1
+
+    - name: Clean
+      run: dotnet clean
+    - name: NuGet clear cache
+      run: nuget locals all -clear
+
+    - name: Restore tools
+      run: dotnet tool restore
+    #- name: Check format
+    #  run: dotnet format --verify-no-changes
+
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Check dependencies for deprecated packages
+      run: dotnet list package --deprecated
+    - name: Check dependencies for vulnerable packages
+      run: dotnet list package --vulnerable --include-transitive
+
+    - name: Build
+      run: dotnet build --no-restore
+      
+    - name: Test
+      run: dotnet test --no-build --verbosity normal --collect "Code coverage"
+      
+    - name: Pack
+      working-directory: src/PeterJuhasz.Extensions
+      run: dotnet pack --configuration Release --version-suffix "preview.${{ github.run_number }}" -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg
+      
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: packages
+        path: src/PeterJuhasz.Extensions/bin/Release/PeterJuhasz.Extensions.nupkg
+
+    - name: NuGet Authenticate
+      uses: NuGet/login@v1
+      id: login
+      with:
+        user: Peter.Juhasz
+
+    - name: NuGet Push
+      run: dotnet nuget push src/PeterJuhasz.Extensions/bin/Release/PeterJuhasz.Extensions.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{steps.login.outputs.NUGET_API_KEY}}
+      if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'

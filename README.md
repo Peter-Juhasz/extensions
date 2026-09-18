@@ -19,7 +19,8 @@ A few examples:
    - [new api](https://github.com/Peter-Juhasz/extensions/labels/new%20api) `DateTimeOffset Floor(TimeSpan unit)`: rounds down a date and time to a specific time interval.
    - [new api](https://github.com/Peter-Juhasz/extensions/labels/new%20api) `DateTimeOffset Round(TimeSpan unit)`: rounds up or down a date and time to the nearest specific time interval.															   
    - [new api](https://github.com/Peter-Juhasz/extensions/labels/new%20api) `DateTimeOffset Ceiling(TimeSpan unit)`: rounds up a date and time to a specific time interval.
-   - [new api](https://github.com/Peter-Juhasz/extensions/labels/new%20api) `DateTimeOffset StartOfWeek(DayOfWeek firstDayOfWeek)`: calculates the start of the week.
+   - [new api](https://github.com/Peter-Juhasz/extensions/labels/new%20api) `FloorToYear()`, `FloorToHalf()`, `FloorToQuarter()`, `FloorToMonth()`, `FloorToWeek(DayOfWeek firstDayOfWeek)`: rounds down a date and time to the start of the calendar period.
+  - [new api](https://github.com/Peter-Juhasz/extensions/labels/new%20api) `CeilToYear()`, `CeilToHalf()`, `CeilToQuarter()`, `CeilToMonth()`, `CeilToWeek(DayOfWeek firstDayOfWeek)`: rounds up a date and time to the start of the next calendar period.
    - [new api](https://github.com/Peter-Juhasz/extensions/labels/new%20api) `string ToRfc3339Format()`: formats a `DateTimeOffset` as RFC-3339 format.
    - [helper](https://github.com/Peter-Juhasz/extensions/labels/helper) `DateTimeOffset ToTimeZone(TimeZoneInfo destinationTimeZone)`: converts a date and time to another time zone.
  - `Guid`

@@ -1,0 +1,7 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="src/PeterJuhasz.Extensions/PeterJuhasz.Extensions.csproj" />
+  <Project Path="tests/PeterJuhasz.Extensions.Tests/PeterJuhasz.Extensions.Tests.csproj" />
+</Solution>
