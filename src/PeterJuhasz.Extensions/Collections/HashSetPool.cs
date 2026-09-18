@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.ObjectPool;
 
-namespace System.Collections;
+namespace System.Collections.Generic;
 
 public static partial class HashSetPool<T>
 {
@@ -38,33 +38,6 @@ public static partial class HashSetPool<T>
 				list.TrimExcess();
 			}
 
-			return true;
-		}
-	}
-}
-
-public static partial class SmallSetPool<T> where T : notnull
-{
-	public static readonly ObjectPool<SmallSet<T>> Default = DefaultPool.Create(Policy.Instance);
-
-	public static ObjectPool<SmallSet<T>> Create(int size = 20)
-		=> DefaultPool.Create(Policy.Instance, size);
-
-	public static PooledObject<SmallSet<T>> GetPooledObject()
-		=> Default.GetPooledObject();
-
-	public static PooledObject<SmallSet<T>> GetPooledObject(out SmallSet<T> set)
-		=> Default.GetPooledObject(out set);
-
-	private sealed class Policy(int? initialCapacity = null) : IPooledObjectPolicy<SmallSet<T>>
-	{
-		public static readonly Policy Instance = new();
-
-		public SmallSet<T> Create() => initialCapacity is int ic ? new(capacity: ic) : [];
-
-		public bool Return(SmallSet<T> list)
-		{
-			list.Clear();
 			return true;
 		}
 	}

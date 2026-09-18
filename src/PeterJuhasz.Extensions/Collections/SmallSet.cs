@@ -1,4 +1,6 @@
-﻿namespace System.Collections.Generic;
+﻿using Microsoft.Extensions.ObjectPool;
+
+namespace System.Collections.Generic;
 
 public sealed class SmallSet<T>(IEqualityComparer<T>? comparer = null, int capacity = 1) : ISet<T>, IReadOnlySet<T>
 {
@@ -219,5 +221,32 @@ public static partial class SmallCollectionsMarshal
 	extension<T>(SmallSet<T> set) where T : notnull
 	{
 		public Span<T> AsSpan() => new(set._items, 0, set._count);
+	}
+}
+
+public static partial class SmallSetPool<T> where T : notnull
+{
+	public static readonly ObjectPool<SmallSet<T>> Default = DefaultPool.Create(Policy.Instance);
+
+	public static ObjectPool<SmallSet<T>> Create(int size = 20)
+		=> DefaultPool.Create(Policy.Instance, size);
+
+	public static PooledObject<SmallSet<T>> GetPooledObject()
+		=> Default.GetPooledObject();
+
+	public static PooledObject<SmallSet<T>> GetPooledObject(out SmallSet<T> set)
+		=> Default.GetPooledObject(out set);
+
+	private sealed class Policy(int? initialCapacity = null) : IPooledObjectPolicy<SmallSet<T>>
+	{
+		public static readonly Policy Instance = new();
+
+		public SmallSet<T> Create() => initialCapacity is int ic ? new(capacity: ic) : [];
+
+		public bool Return(SmallSet<T> list)
+		{
+			list.Clear();
+			return true;
+		}
 	}
 }
