@@ -1,4 +1,4 @@
-﻿namespace App.Core.Threading;
+﻿namespace System.Threading;
 
 public static class StaticInstanceCache
 {

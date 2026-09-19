@@ -1,10 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Diagnostics.CodeAnalysis;
-using System.Net.WebSockets;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization.Metadata;
 
-namespace App.Core.Serialization;
+namespace System.Net.WebSockets;
 
 [RequiresUnreferencedCode("Uses reflection to create generic types at runtime.")]
 public abstract class JsonWebSocketClient<TInbound, TOutbound>(
