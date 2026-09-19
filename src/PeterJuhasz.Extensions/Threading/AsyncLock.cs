@@ -17,6 +17,21 @@ public sealed class AsyncLock
 			);
 	}
 
+	public static Task<IDisposable> LockAsync(SemaphoreSlim semaphore, CancellationToken cancellationToken)
+	{
+		Task<IDisposable> releaser = Task.FromResult((IDisposable)new Releaser(semaphore));
+		Task wait = semaphore.WaitAsync(cancellationToken);
+		return wait.IsCompleted
+			? releaser
+			: wait.ContinueWith(
+				(_, state) => (IDisposable)state!,
+				releaser.Result,
+				cancellationToken,
+				TaskContinuationOptions.ExecuteSynchronously,
+				TaskScheduler.Default
+			);
+	}
+
 	private sealed class Releaser(SemaphoreSlim semaphore) : IDisposable
 	{
 		public void Dispose() => semaphore.Release();

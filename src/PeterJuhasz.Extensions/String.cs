@@ -468,6 +468,16 @@ public static partial class Extensions
 			return firstNotIndex;
 		}
 
+		public int CountWhile(T value)
+		{
+			var firstNotIndex = span.IndexOfAnyExcept(value);
+			if (firstNotIndex == -1)
+			{
+				return span.Length;
+			}
+			return firstNotIndex;
+		}
+
 		public int CountWhileBackwards(SearchValues<T> set)
 		{
 			var firstNotIndex = span.LastIndexOfAnyExcept(set);
