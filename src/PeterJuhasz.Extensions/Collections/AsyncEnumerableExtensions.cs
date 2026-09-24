@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Threading.Channels;
 
-namespace App.Server.Shared;
+namespace System.Collections.Generic;
 
 // https://github.com/dotnet/aspire/blob/main/src/Shared/ChannelExtensions.cs
 

@@ -1,4 +1,4 @@
-﻿
+﻿namespace System;
 
 public class NotFoundException : Exception
 {

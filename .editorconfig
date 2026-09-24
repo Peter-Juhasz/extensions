@@ -46,6 +46,9 @@ dotnet_diagnostic.CS9107.severity = none
 # The given expression is never of the provided type
 dotnet_diagnostic.CS0184.severity = error
 
+# CA1050: Declare types in namespaces
+dotnet_diagnostic.CA1050.severity = error
+
 [*.{html,cshtml,vbhtml,razor}]
 
 [*.{css,scss,sass,less}]

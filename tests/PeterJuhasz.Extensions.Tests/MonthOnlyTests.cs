@@ -1,4 +1,6 @@
-﻿[TestClass]
+﻿namespace PeterJuhasz.Extensions.Tests;
+
+[TestClass]
 public class MonthOnlyTests
 {
 	[TestMethod]

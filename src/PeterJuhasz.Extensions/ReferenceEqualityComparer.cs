@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
-namespace App.Models;
+namespace System.Collections.Generic;
 
 public class ReferenceEqualityComparer<T> : IEqualityComparer<T> where T : class
 {
