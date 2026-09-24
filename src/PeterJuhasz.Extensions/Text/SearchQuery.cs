@@ -547,7 +547,7 @@ public readonly record struct TextSearchOptimized<T>(
 	public static implicit operator T(TextSearchOptimized<T> value) => value.Value;
 }
 
-public struct LazyTextSearchOptimized<T>(T value, Func<T, StringValues> Selector)
+public struct LazyTextSearchOptimized<T>(T value, Func<T, StringValues> selector)
 {
 	public readonly T Value => value;
 
@@ -558,7 +558,7 @@ public struct LazyTextSearchOptimized<T>(T value, Func<T, StringValues> Selector
 		{
 			if (!_normalizedText.HasValue)
 			{
-				var texts = Selector(value);
+				var texts = selector(value);
 				var count = texts.Count;
 				if (count == 0)
 				{
