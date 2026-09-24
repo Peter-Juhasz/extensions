@@ -1,14 +1,21 @@
-﻿namespace System.Collections;
+﻿using System.Numerics;
+using System.Runtime.CompilerServices;
 
-public readonly ref struct ValueBitArray
+namespace System.Collections;
+
+public readonly ref struct ValueBitArray<T>
+	where T : unmanaged, IBinaryInteger<T>, 
+		IShiftOperators<T, int, T>, IBitwiseOperators<T, T, T>,
+		IComparisonOperators<T, T, bool>
 {
-	public ValueBitArray(Span<ulong> buffer)
+	public ValueBitArray(Span<T> buffer)
 	{
 		_buffer = buffer;
 	}
 
-	private readonly Span<ulong> _buffer;
-	private const int NumberOfBitsInBucket = sizeof(ulong) * 8;
+	private readonly Span<T> _buffer;
+
+	private static readonly int NumberOfBitsInBucket = Unsafe.SizeOf<T>() * 8;
 
 	public static int GetRequiredBucketCount(int count)
 	{
@@ -29,40 +36,24 @@ public readonly ref struct ValueBitArray
 		get
 		{
 			(int bucket, int position) = Math.DivRem(index, NumberOfBitsInBucket);
-			return (_buffer[bucket] & (1ul << position)) > 0ul;
+			return (_buffer[bucket] & (T.One << position)) != T.Zero;
 		}
 		set
 		{
 			(int bucket, int position) = Math.DivRem(index, NumberOfBitsInBucket);
 			_buffer[bucket] = value switch
 			{
-				true => _buffer[bucket] | (1ul << position),
-				false => _buffer[bucket] & ~(1ul << position),
+				true => _buffer[bucket] | (T.One << position),
+				false => _buffer[bucket] & ~(T.One << position),
 			};
 		}
 	}
 
-	public bool Any() => _buffer.ContainsAnyExcept(0UL);
+	public bool Any() => _buffer.ContainsAnyExcept(T.Zero);
 
 	public bool IsEmpty() => !Any();
 
-	public bool All()
-	{
-		for (var i = 0; i < _buffer.Length - 1; i++)
-		{
-			if (_buffer[i] != ulong.MaxValue)
-			{
-				return false;
-			}
-		}
-
-		if (_buffer.Length > 0 && _buffer[^1] != (ulong.MaxValue >> (NumberOfBitsInBucket - Capacity % NumberOfBitsInBucket)))
-		{
-			return false;
-		}
-
-		return true;
-	}
+	public bool All() => !_buffer.ContainsAnyExcept(T.AllBitsSet);
 
 	public readonly void Clear() => _buffer.Clear();
 }
