@@ -54,7 +54,7 @@ jobs:
       
     - name: Pack
       working-directory: src/${{ env.PROJECT_NAME }}
-      run: dotnet pack --configuration Release --version-suffix "preview.${{ github.run_number }}" -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg
+      run: dotnet pack --configuration Release --version-suffix "preview.${{ github.run_number }}" -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:GeneratePublicApi=true
       
     # - name: Attest
     #   uses: actions/attest-build-provenance@v4

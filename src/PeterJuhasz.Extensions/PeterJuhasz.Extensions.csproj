@@ -28,10 +28,52 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="5.6.0">
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		  <PrivateAssets>all</PrivateAssets>
+		</PackageReference>
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.*" />
 		<PackageReference Include="Microsoft.Extensions.ObjectPool" Version="10.*" />
 		<PackageReference Include="System.Memory.Data" Version="10.*" />
 		<PackageReference Include="Microsoft.Extensions.Primitives" Version="10.*" />
 	</ItemGroup>
+
+	<!-- PublicApiAnalyzers is only active inside the dotnet format run of the GeneratePublicApi target, which sets _GeneratingPublicApi -->
+	<PropertyGroup>
+		<_PublicApiDir>$(BaseIntermediateOutputPath)PublicApi\</_PublicApiDir>
+	</PropertyGroup>
+	<ItemGroup Condition="'$(_GeneratingPublicApi)' == 'true'">
+		<AdditionalFiles Include="$(_PublicApiDir)PublicAPI.Shipped.txt" />
+		<AdditionalFiles Include="$(_PublicApiDir)PublicAPI.Unshipped.txt" />
+	</ItemGroup>
+	<Target Name="RemovePublicApiAnalyzer" BeforeTargets="CoreCompile" Condition="'$(_GeneratingPublicApi)' != 'true'">
+		<ItemGroup>
+			<Analyzer Remove="@(Analyzer)" Condition="'%(Analyzer.NuGetPackageId)' == 'Microsoft.CodeAnalysis.PublicApiAnalyzers'" />
+		</ItemGroup>
+	</Target>
+
+	<!-- Generates PublicAPI.Shipped.txt from scratch using the RS0016 code fix of PublicApiAnalyzers and packs it, opt-in with -p:GeneratePublicApi=true -->
+	<Target Name="GeneratePublicApi" AfterTargets="Build" Condition="'$(GeneratePublicApi)' == 'true' and '$(DesignTimeBuild)' != 'true'">
+		<PropertyGroup>
+			<_DotNetHost>$(DOTNET_HOST_PATH)</_DotNetHost>
+			<_DotNetHost Condition="'$(_DotNetHost)' == ''">dotnet</_DotNetHost>
+		</PropertyGroup>
+
+		<!-- the code fix only adds entries to the unshipped file, so start both from empty -->
+		<WriteLinesToFile File="$(_PublicApiDir)PublicAPI.Shipped.txt" Lines="#nullable enable" Overwrite="true" />
+		<WriteLinesToFile File="$(_PublicApiDir)PublicAPI.Unshipped.txt" Lines="#nullable enable" Overwrite="true" />
+		<!-- environment variables become MSBuild properties in the project loaded by dotnet format -->
+		<Exec Command="&quot;$(_DotNetHost)&quot; format analyzers &quot;$(MSBuildProjectFullPath)&quot; --diagnostics RS0016 --severity info --no-restore" EnvironmentVariables="_GeneratingPublicApi=true" />
+
+		<ReadLinesFromFile File="$(_PublicApiDir)PublicAPI.Unshipped.txt">
+			<Output TaskParameter="Lines" ItemName="_PublicApiLine" />
+		</ReadLinesFromFile>
+		<WriteLinesToFile File="$(_PublicApiDir)PublicAPI.Shipped.txt" Lines="@(_PublicApiLine)" Overwrite="true" />
+		<Delete Files="$(_PublicApiDir)PublicAPI.Unshipped.txt" />
+
+		<ItemGroup>
+			<None Include="$(_PublicApiDir)PublicAPI.Shipped.txt" Pack="true" PackagePath="\" />
+		</ItemGroup>
+	</Target>
 
 </Project>
