@@ -2,30 +2,51 @@
 
 namespace System.Text;
 
-public readonly struct StringBuilderBufferWriter(StringBuilder builder) : IBufferWriter<char>
+public struct StringBuilderBufferWriter(StringBuilder builder) : IBufferWriter<char>
 {
-	public void Write(char value)
+	private char[]? _buffer = null;
+
+	public readonly void Write(char value)
 	{
 		builder.Append(value);
 	}
 
-	public void Write(ReadOnlySpan<char> values)
+	public readonly void Write(ReadOnlySpan<char> values)
 	{
 		builder.Append(values);
 	}
 
-	public readonly Span<char> GetSpan(int minimumLength)
+	public Span<char> GetSpan(int minimumLength)
 	{
-		throw new NotSupportedException();
+		return GetMemory(minimumLength).Span;
 	}
 
-	public readonly Memory<char> GetMemory(int minimumLength)
+	public Memory<char> GetMemory(int minimumLength)
 	{
-		throw new NotSupportedException();
+		if (_buffer == null)
+		{
+			_buffer = new char[minimumLength];
+		}
+
+		if (_buffer.Length < minimumLength)
+		{
+			var oldArray = _buffer;
+			var newArray = new char[minimumLength];
+			oldArray.CopyTo(newArray);
+			_buffer = newArray;
+		}
+
+		return _buffer;
 	}
 
 	public void Advance(int count)
 	{
-		throw new NotImplementedException();
+		if (_buffer == null)
+		{
+			throw new InvalidOperationException("GetMemory must be called before Advance.");
+		}
+
+		builder.Append(_buffer.AsSpan(0, count));
+		_buffer.AsSpan().Clear();
 	}
 }
