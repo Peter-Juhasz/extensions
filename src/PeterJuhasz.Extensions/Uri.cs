@@ -492,7 +492,7 @@ public static partial class UriExtensions
 	internal static readonly SearchValues<char> AllowedPathCharacters = SearchValues.Create("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-+%/_.@");
 	internal static readonly SearchValues<char> AllowedPathSegmentCharacters = SearchValues.Create("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-+_.%@");
 	internal static readonly SearchValues<char> AllowedQueryCharacters = SearchValues.Create("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-+%_.?=&[]:,@");
-	internal static readonly SearchValues<char> AllowedQueryNameCharacters = SearchValues.Create("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_");
+	internal static readonly SearchValues<char> AllowedQueryNameCharacters = SearchValues.Create("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.");
 }
 
 public static partial class UrlValidator
